@@ -5,10 +5,13 @@ description = "My first discord bot It is cool"
 authors = ["Matthew Steinmetz <mattygsteinmetz@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
 "discord.py" = "^2.3.2"
+python-dotenv = "^1.0.1"
+aiocoingecko = { git = "https://github.com/regulad/aiocoingecko.git", rev = "0e6151fcbe3b36e12762d0a51dc5ca41239596b0" }
 
 
 [build-system]
