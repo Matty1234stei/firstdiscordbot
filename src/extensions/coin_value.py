@@ -21,8 +21,24 @@ class CoinValueCog(Cog):
     @hybrid_command()
     async def get_coin_value(self, ctx: Context, coin: str) -> None:
         """ Get the value of a coin"""
-        coin_data = await self.cg.get_price(ids=coin, vs_currencies="usd")
-        await ctx.send(f"{coin} is worth {coin_data[coin]['usd']} USD")
+        await ctx.defer()
+        try:
+            coin_data = await self.cg.get_price(ids=coin, vs_currencies="usd")
+            if not coin_data.get(coin):
+                raise Exception
+        except:
+            await ctx.send("error!")
+            raise
+        else:
+            await ctx.send(f"{coin} is worth {coin_data[coin]['usd']} USD")
+
+    @hybrid_command()
+    async def setcoinvalue(self, ctx: Context, coin: str) -> None:
+        """ Set the servers coin value """
+        self.bot.db[f"{ctx.guild.id}-coin"] = coin
+        await ctx.send(f"sevrer coin set to: {coin}")
+
+        
 
 
 async def setup(bot: Bot) -> None:
