@@ -32,7 +32,7 @@ class CoinValueCog(Cog):
 
             price = coin_data[coin]['usd']
 
-            await guild.me.edit(nick=f"{coin}: ${price}")
+            await guild.me.edit(nick=f"{coin.title()}: ${price}")
 
 
     @hybrid_command()
