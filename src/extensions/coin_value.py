@@ -14,9 +14,26 @@ class CoinValueCog(Cog):
     def cog_unload(self):
         self.printer.cancel()
 
-    @tasks.loop(seconds=5.0)
+    @tasks.loop(seconds=30.0)
     async def printer(self):
-        print(1)
+        for guild in self.bot.guilds:
+            coin = self.bot.db.get(f"{guild.id}-coin")
+
+            if coin is None:
+                continue
+
+            try:
+                coin_data = await self.cg.get_price(ids=coin, vs_currencies="usd")
+                if not coin_data.get(coin):
+                    raise Exception
+            except Exception as e:
+                print(e)
+                continue
+
+            price = coin_data[coin]['usd']
+
+            await guild.me.edit(nick=f"{coin}: ${price}")
+
 
     @hybrid_command()
     async def get_coin_value(self, ctx: Context, coin: str) -> None:
@@ -30,11 +47,12 @@ class CoinValueCog(Cog):
             await ctx.send("error!")
             raise
         else:
-            await ctx.send(f"{coin} is worth {coin_data[coin]['usd']} USD")
+            await ctx.send(f"{coin.title()} is worth {coin_data[coin]['usd']} USD")
 
     @hybrid_command()
     async def setcoinvalue(self, ctx: Context, coin: str) -> None:
         """ Set the servers coin value """
+        await ctx.defer()
         self.bot.db[f"{ctx.guild.id}-coin"] = coin
         await ctx.send(f"sevrer coin set to: {coin}")
 
